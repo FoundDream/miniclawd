@@ -1,7 +1,7 @@
 # 🦞 miniclawd
 
 一个轻量级的个人 AI 助手，支持多渠道接入。  
-使用 TypeScript + Bun 构建，**仅 ~5700 行代码**。
+使用 TypeScript + Bun 构建，**仅 ~5900 行代码**。
 
 ![miniclawd](./assets/miniclawd.png)
 
