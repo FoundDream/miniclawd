@@ -12,10 +12,14 @@ import { expandUser } from "../utils/paths.js";
  */
 export class ExecTool extends Tool {
   readonly name = "exec";
-  readonly description = "Execute a shell command and return its output. Use with caution.";
+  readonly description =
+    "Execute a shell command and return its output. Use with caution.";
   readonly parameters = z.object({
     command: z.string().describe("The shell command to execute"),
-    working_dir: z.string().optional().describe("Optional working directory for the command"),
+    working_dir: z
+      .string()
+      .optional()
+      .describe("Optional working directory for the command"),
   });
 
   private timeout: number;
@@ -27,7 +31,10 @@ export class ExecTool extends Tool {
     this.defaultWorkingDir = options?.workingDir;
   }
 
-  async execute(params: { command: string; working_dir?: string }): Promise<string> {
+  async execute(params: {
+    command: string;
+    working_dir?: string;
+  }): Promise<string> {
     const cwd = params.working_dir
       ? expandUser(params.working_dir)
       : this.defaultWorkingDir || process.cwd();
@@ -45,7 +52,9 @@ export class ExecTool extends Tool {
 
       const timeout = setTimeout(() => {
         child.kill("SIGKILL");
-        resolve(`Error: Command timed out after ${this.timeout / 1000} seconds`);
+        resolve(
+          `Error: Command timed out after ${this.timeout / 1000} seconds`,
+        );
       }, this.timeout);
 
       child.stdout?.on("data", (data) => {
@@ -81,7 +90,9 @@ export class ExecTool extends Tool {
         // Truncate very long output
         const maxLen = 10000;
         if (output.length > maxLen) {
-          output = output.slice(0, maxLen) + `\n... (truncated, ${output.length - maxLen} more chars)`;
+          output =
+            output.slice(0, maxLen) +
+            `\n... (truncated, ${output.length - maxLen} more chars)`;
         }
 
         resolve(output);

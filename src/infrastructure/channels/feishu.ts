@@ -96,7 +96,9 @@ export class FeishuChannel extends BaseChannel {
 
     try {
       // Determine if it's a chat_id or open_id
-      const receiveIdType = msg.chatId.startsWith("oc_") ? "chat_id" : "open_id";
+      const receiveIdType = msg.chatId.startsWith("oc_")
+        ? "chat_id"
+        : "open_id";
 
       await this.client.im.message.create({
         params: {
@@ -124,7 +126,8 @@ export class FeishuChannel extends BaseChannel {
       // Skip bot's own messages
       if (sender.sender_type === "app") return;
 
-      const senderId = sender.sender_id?.open_id || sender.sender_id?.user_id || "unknown";
+      const senderId =
+        sender.sender_id?.open_id || sender.sender_id?.user_id || "unknown";
       const chatId = message.chat_id || senderId;
 
       // Check if sender is allowed
@@ -166,7 +169,10 @@ export class FeishuChannel extends BaseChannel {
         content = "[empty message]";
       }
 
-      logger.debug({ senderId, content: content.slice(0, 50) }, "Feishu message received");
+      logger.debug(
+        { senderId, content: content.slice(0, 50) },
+        "Feishu message received",
+      );
 
       // Forward to the message bus
       await this.handleMessage(senderId, chatId, content, mediaPaths, {

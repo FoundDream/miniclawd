@@ -2,10 +2,20 @@
  * Session storage implementation.
  */
 
-import { existsSync, readFileSync, writeFileSync, unlinkSync, readdirSync } from "fs";
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  unlinkSync,
+  readdirSync,
+} from "fs";
 import { join } from "path";
 import { ensureDir, safeFilename } from "../../utils/paths.js";
-import type { Session, SessionMessage, SessionInfo } from "../../core/types/session.js";
+import type {
+  Session,
+  SessionMessage,
+  SessionInfo,
+} from "../../core/types/session.js";
 import type { ISessionStore } from "../../core/interfaces/storage.js";
 import logger from "../../utils/logger.js";
 
@@ -29,7 +39,7 @@ export function addMessage(
   session: Session,
   role: SessionMessage["role"],
   content: string,
-  extras?: Partial<SessionMessage>
+  extras?: Partial<SessionMessage>,
 ): void {
   const msg: SessionMessage = {
     role,
@@ -44,7 +54,10 @@ export function addMessage(
 /**
  * Get message history for LLM context.
  */
-export function getHistory(session: Session, maxMessages: number = 50): Array<{ role: string; content: string }> {
+export function getHistory(
+  session: Session,
+  maxMessages: number = 50,
+): Array<{ role: string; content: string }> {
   const recent =
     session.messages.length > maxMessages
       ? session.messages.slice(-maxMessages)
@@ -69,7 +82,9 @@ export class SessionManager implements ISessionStore {
   private cache: Map<string, Session> = new Map();
 
   constructor(workspace: string) {
-    this.sessionsDir = ensureDir(join(process.env.HOME || "", ".miniclawd", "sessions"));
+    this.sessionsDir = ensureDir(
+      join(process.env.HOME || "", ".miniclawd", "sessions"),
+    );
   }
 
   private getSessionPath(key: string): string {
@@ -181,7 +196,9 @@ export class SessionManager implements ISessionStore {
   listSessions(): SessionInfo[] {
     const sessions: SessionInfo[] = [];
 
-    const files = readdirSync(this.sessionsDir).filter((f) => f.endsWith(".jsonl"));
+    const files = readdirSync(this.sessionsDir).filter((f) =>
+      f.endsWith(".jsonl"),
+    );
 
     for (const file of files) {
       const path = join(this.sessionsDir, file);

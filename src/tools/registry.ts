@@ -70,7 +70,10 @@ export class ToolRegistry {
   /**
    * Execute a tool by name with given parameters.
    */
-  async execute(name: string, params: Record<string, unknown>): Promise<string> {
+  async execute(
+    name: string,
+    params: Record<string, unknown>,
+  ): Promise<string> {
     const tool = this.tools.get(name);
     if (!tool) {
       return `Error: Tool '${name}' not found`;

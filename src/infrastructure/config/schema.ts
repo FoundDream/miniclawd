@@ -111,7 +111,9 @@ export function getApiKey(config: Config): string | undefined {
  */
 export function getApiBase(config: Config): string | undefined {
   if (config.providers.openrouter.apiKey) {
-    return config.providers.openrouter.apiBase || "https://openrouter.ai/api/v1";
+    return (
+      config.providers.openrouter.apiBase || "https://openrouter.ai/api/v1"
+    );
   }
   return undefined;
 }

@@ -9,7 +9,13 @@ import { MemoryStore } from "../infrastructure/storage/memory-store.js";
 import { SkillsLoader } from "./skills-loader.js";
 import { expandUser } from "../utils/paths.js";
 
-const BOOTSTRAP_FILES = ["AGENTS.md", "SOUL.md", "USER.md", "TOOLS.md", "IDENTITY.md"];
+const BOOTSTRAP_FILES = [
+  "AGENTS.md",
+  "SOUL.md",
+  "USER.md",
+  "TOOLS.md",
+  "IDENTITY.md",
+];
 
 /**
  * Builds the context (system prompt + messages) for the agent.
@@ -136,7 +142,7 @@ When remembering something, write to ${this.workspace}/memory/MEMORY.md`;
     history: Array<{ role: string; content: string }>,
     currentMessage: string,
     skillNames?: string[],
-    media?: string[]
+    media?: string[],
   ): Promise<CoreMessage[]> {
     const messages: CoreMessage[] = [];
 
@@ -181,7 +187,7 @@ When remembering something, write to ${this.workspace}/memory/MEMORY.md`;
     messages: CoreMessage[],
     toolCallId: string,
     toolName: string,
-    result: string
+    result: string,
   ): CoreMessage[] {
     messages.push({
       role: "tool",
@@ -207,9 +213,15 @@ When remembering something, write to ${this.workspace}/memory/MEMORY.md`;
       id: string;
       type: "function";
       function: { name: string; arguments: string };
-    }>
+    }>,
   ): CoreMessage[] {
-    const parts: Array<{ type: string; text?: string; toolCallId?: string; toolName?: string; args?: unknown }> = [];
+    const parts: Array<{
+      type: string;
+      text?: string;
+      toolCallId?: string;
+      toolName?: string;
+      args?: unknown;
+    }> = [];
 
     if (content) {
       parts.push({ type: "text", text: content });
@@ -229,7 +241,10 @@ When remembering something, write to ${this.workspace}/memory/MEMORY.md`;
     if (parts.length > 0) {
       messages.push({
         role: "assistant",
-        content: parts.length === 1 && parts[0].type === "text" ? (parts[0].text || "") : parts,
+        content:
+          parts.length === 1 && parts[0].type === "text"
+            ? parts[0].text || ""
+            : parts,
       } as CoreMessage);
     } else {
       messages.push({ role: "assistant", content: "" });

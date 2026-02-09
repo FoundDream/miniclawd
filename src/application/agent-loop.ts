@@ -5,17 +5,29 @@
 import type { CoreMessage } from "ai";
 import { MessageBus } from "../infrastructure/queue/message-bus.js";
 import type { InboundMessage, OutboundMessage } from "../core/types/message.js";
-import { createOutboundMessage, getSessionKey } from "../infrastructure/queue/events.js";
+import {
+  createOutboundMessage,
+  getSessionKey,
+} from "../infrastructure/queue/events.js";
 import { AIProvider } from "../infrastructure/llm/ai-sdk-provider.js";
 import { ContextBuilder } from "./context-builder.js";
 import { ToolRegistry } from "../tools/registry.js";
-import { ReadFileTool, WriteFileTool, EditFileTool, ListDirTool } from "../tools/fs.js";
+import {
+  ReadFileTool,
+  WriteFileTool,
+  EditFileTool,
+  ListDirTool,
+} from "../tools/fs.js";
 import { ExecTool } from "../tools/exec.js";
 import { WebSearchTool, WebFetchTool } from "../tools/web.js";
 import { MessageTool } from "../tools/message.js";
 import { SpawnTool } from "../tools/spawn.js";
 import { SubagentManager } from "./subagent.js";
-import { SessionManager, addMessage, getHistory } from "../infrastructure/storage/session-store.js";
+import {
+  SessionManager,
+  addMessage,
+  getHistory,
+} from "../infrastructure/storage/session-store.js";
 import type { Config } from "../core/types/config.js";
 import { getWorkspacePath } from "../infrastructure/config/schema.js";
 import logger from "../utils/logger.js";
@@ -53,11 +65,18 @@ export class AgentLoop {
     braveApiKey?: string;
   }) {
     this.bus = options.bus;
-    this.provider = new AIProvider({ config: options.config, defaultModel: options.model });
+    this.provider = new AIProvider({
+      config: options.config,
+      defaultModel: options.model,
+    });
     this.workspace = getWorkspacePath(options.config);
     this.model = options.model || options.config.agents.defaults.model;
-    this.maxIterations = options.maxIterations || options.config.agents.defaults.maxToolIterations;
-    this.braveApiKey = options.braveApiKey || options.config.tools.web.search.apiKey || undefined;
+    this.maxIterations =
+      options.maxIterations || options.config.agents.defaults.maxToolIterations;
+    this.braveApiKey =
+      options.braveApiKey ||
+      options.config.tools.web.search.apiKey ||
+      undefined;
 
     this.context = new ContextBuilder(this.workspace);
     this.sessions = new SessionManager(this.workspace);
@@ -127,7 +146,7 @@ export class AgentLoop {
             channel: msg.channel,
             chatId: msg.chatId,
             content: `Sorry, I encountered an error: ${error}`,
-          })
+          }),
         );
       }
     }
@@ -150,7 +169,10 @@ export class AgentLoop {
       return this.processSystemMessage(msg);
     }
 
-    logger.info({ channel: msg.channel, sender: msg.senderId }, "Processing message");
+    logger.info(
+      { channel: msg.channel, sender: msg.senderId },
+      "Processing message",
+    );
 
     // Get or create session
     const sessionKey = getSessionKey(msg);
@@ -169,7 +191,12 @@ export class AgentLoop {
 
     // Build initial messages
     const history = getHistory(session);
-    const messages = await this.context.buildMessages(history, msg.content, undefined, msg.media);
+    const messages = await this.context.buildMessages(
+      history,
+      msg.content,
+      undefined,
+      msg.media,
+    );
 
     // Agent loop
     let iteration = 0;
@@ -182,7 +209,7 @@ export class AgentLoop {
       const response = await this.provider.chat(
         messages,
         this.tools.getDefinitions(),
-        this.model
+        this.model,
       );
 
       // Handle tool calls
@@ -198,15 +225,23 @@ export class AgentLoop {
         messages.push({
           role: "assistant",
           content: [
-            ...(response.content ? [{ type: "text" as const, text: response.content }] : []),
+            ...(response.content
+              ? [{ type: "text" as const, text: response.content }]
+              : []),
             ...toolCallParts,
           ],
         });
 
         // Execute tools
         for (const toolCall of response.toolCalls) {
-          logger.debug({ tool: toolCall.name, args: toolCall.arguments }, "Executing tool");
-          const result = await this.tools.execute(toolCall.name, toolCall.arguments);
+          logger.debug(
+            { tool: toolCall.name, args: toolCall.arguments },
+            "Executing tool",
+          );
+          const result = await this.tools.execute(
+            toolCall.name,
+            toolCall.arguments,
+          );
 
           messages.push({
             role: "tool",
@@ -246,7 +281,9 @@ export class AgentLoop {
   /**
    * Process a system message (e.g., subagent announce).
    */
-  private async processSystemMessage(msg: InboundMessage): Promise<OutboundMessage | null> {
+  private async processSystemMessage(
+    msg: InboundMessage,
+  ): Promise<OutboundMessage | null> {
     logger.info({ sender: msg.senderId }, "Processing system message");
 
     // Parse origin from chat_id (format: "channel:chat_id")
@@ -288,7 +325,7 @@ export class AgentLoop {
       const response = await this.provider.chat(
         messages,
         this.tools.getDefinitions(),
-        this.model
+        this.model,
       );
 
       if (AIProvider.hasToolCalls(response)) {
@@ -302,14 +339,19 @@ export class AgentLoop {
         messages.push({
           role: "assistant",
           content: [
-            ...(response.content ? [{ type: "text" as const, text: response.content }] : []),
+            ...(response.content
+              ? [{ type: "text" as const, text: response.content }]
+              : []),
             ...toolCallParts,
           ],
         });
 
         for (const toolCall of response.toolCalls) {
           logger.debug({ tool: toolCall.name }, "Executing tool");
-          const result = await this.tools.execute(toolCall.name, toolCall.arguments);
+          const result = await this.tools.execute(
+            toolCall.name,
+            toolCall.arguments,
+          );
 
           messages.push({
             role: "tool",
@@ -348,7 +390,10 @@ export class AgentLoop {
   /**
    * Process a message directly (for CLI usage).
    */
-  async processDirect(content: string, sessionKey: string = "cli:direct"): Promise<string> {
+  async processDirect(
+    content: string,
+    sessionKey: string = "cli:direct",
+  ): Promise<string> {
     const msg: InboundMessage = {
       channel: "cli",
       senderId: "user",

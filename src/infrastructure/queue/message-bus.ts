@@ -2,8 +2,14 @@
  * Async message queue for decoupled channel-agent communication.
  */
 
-import type { InboundMessage, OutboundMessage } from "../../core/types/message.js";
-import type { IMessageBus, OutboundCallback } from "../../core/interfaces/message-bus.js";
+import type {
+  InboundMessage,
+  OutboundMessage,
+} from "../../core/types/message.js";
+import type {
+  IMessageBus,
+  OutboundCallback,
+} from "../../core/interfaces/message-bus.js";
 import logger from "../../utils/logger.js";
 
 /**
@@ -90,7 +96,9 @@ export class MessageBus implements IMessageBus {
   /**
    * Consume the next inbound message with timeout.
    */
-  async consumeInboundWithTimeout(timeoutMs: number): Promise<InboundMessage | null> {
+  async consumeInboundWithTimeout(
+    timeoutMs: number,
+  ): Promise<InboundMessage | null> {
     return this.inbound.popWithTimeout(timeoutMs);
   }
 
@@ -111,7 +119,9 @@ export class MessageBus implements IMessageBus {
   /**
    * Consume the next outbound message with timeout.
    */
-  async consumeOutboundWithTimeout(timeoutMs: number): Promise<OutboundMessage | null> {
+  async consumeOutboundWithTimeout(
+    timeoutMs: number,
+  ): Promise<OutboundMessage | null> {
     return this.outbound.popWithTimeout(timeoutMs);
   }
 
@@ -140,7 +150,10 @@ export class MessageBus implements IMessageBus {
         try {
           await callback(msg);
         } catch (error) {
-          logger.error({ error, channel: msg.channel }, "Error dispatching to channel");
+          logger.error(
+            { error, channel: msg.channel },
+            "Error dispatching to channel",
+          );
         }
       }
     }

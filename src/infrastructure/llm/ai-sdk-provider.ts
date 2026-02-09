@@ -30,7 +30,8 @@ export class AIProvider implements ILLMProvider {
 
   constructor(options: AIProviderOptions) {
     this.config = options.config;
-    this.defaultModel = options.defaultModel || options.config.agents.defaults.model;
+    this.defaultModel =
+      options.defaultModel || options.config.agents.defaults.model;
   }
 
   /**
@@ -41,11 +42,13 @@ export class AIProvider implements ILLMProvider {
     tools?: Record<string, CoreTool>,
     model?: string,
     maxTokens?: number,
-    temperature?: number
+    temperature?: number,
   ): Promise<LLMResponse> {
     const modelId = model || this.defaultModel;
-    const resolvedMaxTokens = maxTokens || this.config.agents.defaults.maxTokens;
-    const resolvedTemperature = temperature ?? this.config.agents.defaults.temperature;
+    const resolvedMaxTokens =
+      maxTokens || this.config.agents.defaults.maxTokens;
+    const resolvedTemperature =
+      temperature ?? this.config.agents.defaults.temperature;
 
     try {
       const provider = this.getProvider(modelId);
@@ -105,22 +108,29 @@ export class AIProvider implements ILLMProvider {
     switch (providerName.toLowerCase()) {
       case "anthropic": {
         const anthropic = createAnthropic({
-          apiKey: this.config.providers.anthropic.apiKey || process.env.ANTHROPIC_API_KEY,
+          apiKey:
+            this.config.providers.anthropic.apiKey ||
+            process.env.ANTHROPIC_API_KEY,
         });
         return anthropic(modelName || "claude-sonnet-4-20250514");
       }
 
       case "openai": {
         const openai = createOpenAI({
-          apiKey: this.config.providers.openai.apiKey || process.env.OPENAI_API_KEY,
+          apiKey:
+            this.config.providers.openai.apiKey || process.env.OPENAI_API_KEY,
         });
         return openai(modelName || "gpt-4o");
       }
 
       case "openrouter": {
         const openrouter = createOpenAI({
-          apiKey: this.config.providers.openrouter.apiKey || process.env.OPENROUTER_API_KEY,
-          baseURL: this.config.providers.openrouter.apiBase || "https://openrouter.ai/api/v1",
+          apiKey:
+            this.config.providers.openrouter.apiKey ||
+            process.env.OPENROUTER_API_KEY,
+          baseURL:
+            this.config.providers.openrouter.apiBase ||
+            "https://openrouter.ai/api/v1",
         });
         return openrouter(modelName);
       }
@@ -128,19 +138,29 @@ export class AIProvider implements ILLMProvider {
       case "google":
       case "gemini": {
         const google = createGoogleGenerativeAI({
-          apiKey: this.config.providers.google.apiKey || process.env.GOOGLE_API_KEY,
+          apiKey:
+            this.config.providers.google.apiKey || process.env.GOOGLE_API_KEY,
         });
         return google(modelName || "gemini-2.0-flash");
       }
 
       case "bedrock": {
         const bedrock = createAmazonBedrock({
-          region: this.config.providers.bedrock.region || process.env.AWS_REGION,
-          accessKeyId: this.config.providers.bedrock.accessKeyId || process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: this.config.providers.bedrock.secretAccessKey || process.env.AWS_SECRET_ACCESS_KEY,
-          sessionToken: this.config.providers.bedrock.sessionToken || process.env.AWS_SESSION_TOKEN,
+          region:
+            this.config.providers.bedrock.region || process.env.AWS_REGION,
+          accessKeyId:
+            this.config.providers.bedrock.accessKeyId ||
+            process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey:
+            this.config.providers.bedrock.secretAccessKey ||
+            process.env.AWS_SECRET_ACCESS_KEY,
+          sessionToken:
+            this.config.providers.bedrock.sessionToken ||
+            process.env.AWS_SESSION_TOKEN,
         });
-        return bedrock(modelName || "anthropic.claude-3-5-sonnet-20241022-v2:0");
+        return bedrock(
+          modelName || "anthropic.claude-3-5-sonnet-20241022-v2:0",
+        );
       }
 
       case "groq": {
@@ -154,7 +174,9 @@ export class AIProvider implements ILLMProvider {
       default: {
         // Default to Anthropic
         const anthropic = createAnthropic({
-          apiKey: this.config.providers.anthropic.apiKey || process.env.ANTHROPIC_API_KEY,
+          apiKey:
+            this.config.providers.anthropic.apiKey ||
+            process.env.ANTHROPIC_API_KEY,
         });
         return anthropic(modelId);
       }

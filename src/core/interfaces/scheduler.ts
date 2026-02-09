@@ -2,7 +2,12 @@
  * Scheduler interface.
  */
 
-import type { Schedule, JobPayload, ScheduledJob, JobCallback } from "../types/scheduler.js";
+import type {
+  Schedule,
+  JobPayload,
+  ScheduledJob,
+  JobCallback,
+} from "../types/scheduler.js";
 
 /**
  * Options for adding a job.

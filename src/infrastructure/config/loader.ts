@@ -30,7 +30,7 @@ export function getDataDir(): string {
  */
 function camelToSnake(name: string): string {
   return name.replace(/([A-Z])/g, (match, p1, offset) =>
-    offset > 0 ? `_${p1.toLowerCase()}` : p1.toLowerCase()
+    offset > 0 ? `_${p1.toLowerCase()}` : p1.toLowerCase(),
   );
 }
 
@@ -138,7 +138,11 @@ export function applyEnvOverrides(config: Config): Config {
 /**
  * Set a nested value in an object using a path array.
  */
-function setNestedValue(obj: Record<string, unknown>, path: string[], value: string): void {
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string[],
+  value: string,
+): void {
   let current: Record<string, unknown> = obj;
 
   for (let i = 0; i < path.length - 1; i++) {

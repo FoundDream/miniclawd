@@ -10,7 +10,8 @@ import { z } from "zod";
 import { Tool } from "./base.js";
 
 // Shared constants
-const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7_2) AppleWebKit/537.36";
+const USER_AGENT =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7_2) AppleWebKit/537.36";
 
 /**
  * Strip HTML tags and decode entities.
@@ -44,7 +45,10 @@ function validateUrl(url: string): [boolean, string] {
   try {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) {
-      return [false, `Only http/https allowed, got '${parsed.protocol || "none"}'`];
+      return [
+        false,
+        `Only http/https allowed, got '${parsed.protocol || "none"}'`,
+      ];
     }
     if (!parsed.hostname) {
       return [false, "Missing domain"];
@@ -62,15 +66,19 @@ function toMarkdown(html: string): string {
   // Convert links
   let text = html.replace(
     /<a\s+[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi,
-    (_, href, content) => `[${stripTags(content)}](${href})`
+    (_, href, content) => `[${stripTags(content)}](${href})`,
   );
   // Convert headings
   text = text.replace(
     /<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi,
-    (_, level, content) => `\n${"#".repeat(parseInt(level))} ${stripTags(content)}\n`
+    (_, level, content) =>
+      `\n${"#".repeat(parseInt(level))} ${stripTags(content)}\n`,
   );
   // Convert list items
-  text = text.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_, content) => `\n- ${stripTags(content)}`);
+  text = text.replace(
+    /<li[^>]*>([\s\S]*?)<\/li>/gi,
+    (_, content) => `\n- ${stripTags(content)}`,
+  );
   // Convert paragraphs and divs
   text = text.replace(/<\/(p|div|section|article)>/gi, "\n\n");
   text = text.replace(/<(br|hr)\s*\/?>/gi, "\n");
@@ -126,7 +134,7 @@ export class WebSearchTool extends Tool {
           "X-Subscription-Token": this.apiKey,
         },
         signal: AbortSignal.timeout(10000),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -134,7 +142,9 @@ export class WebSearchTool extends Tool {
     }
 
     const data = (await response.json()) as {
-      web?: { results?: Array<{ title?: string; url?: string; description?: string }> };
+      web?: {
+        results?: Array<{ title?: string; url?: string; description?: string }>;
+      };
     };
     const results = data.web?.results || [];
 
@@ -153,7 +163,10 @@ export class WebSearchTool extends Tool {
     return lines.join("\n");
   }
 
-  private async searchDuckDuckGo(query: string, count: number): Promise<string> {
+  private async searchDuckDuckGo(
+    query: string,
+    count: number,
+  ): Promise<string> {
     // Use DuckDuckGo HTML search and parse results
     const response = await fetch(
       `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`,
@@ -163,7 +176,7 @@ export class WebSearchTool extends Tool {
           Accept: "text/html",
         },
         signal: AbortSignal.timeout(15000),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -173,7 +186,8 @@ export class WebSearchTool extends Tool {
     const html = await response.text();
 
     // Parse results - DDG uses redirect URLs with uddg parameter
-    const results: Array<{ title: string; url: string; description: string }> = [];
+    const results: Array<{ title: string; url: string; description: string }> =
+      [];
 
     // Match result blocks
     const resultBlocks = html.split('<div class="links_main');
@@ -223,7 +237,8 @@ export class WebSearchTool extends Tool {
  */
 export class WebFetchTool extends Tool {
   readonly name = "web_fetch";
-  readonly description = "Fetch URL and extract readable content (HTML → markdown/text).";
+  readonly description =
+    "Fetch URL and extract readable content (HTML → markdown/text).";
   readonly parameters = z.object({
     url: z.string().describe("URL to fetch"),
     extractMode: z.enum(["markdown", "text"]).optional().default("markdown"),
@@ -248,7 +263,10 @@ export class WebFetchTool extends Tool {
     // Validate URL
     const [isValid, errorMsg] = validateUrl(params.url);
     if (!isValid) {
-      return JSON.stringify({ error: `URL validation failed: ${errorMsg}`, url: params.url });
+      return JSON.stringify({
+        error: `URL validation failed: ${errorMsg}`,
+        url: params.url,
+      });
     }
 
     // Try Jina Reader first (better extraction)
@@ -263,7 +281,10 @@ export class WebFetchTool extends Tool {
     return this.fetchDirect(params.url, extractMode, maxChars);
   }
 
-  private async fetchJina(url: string, maxChars: number): Promise<string | null> {
+  private async fetchJina(
+    url: string,
+    maxChars: number,
+  ): Promise<string | null> {
     const response = await fetch(`https://r.jina.ai/${url}`, {
       headers: {
         Accept: "application/json",
@@ -308,7 +329,7 @@ export class WebFetchTool extends Tool {
   private async fetchDirect(
     url: string,
     extractMode: "markdown" | "text",
-    maxChars: number
+    maxChars: number,
   ): Promise<string> {
     try {
       const response = await fetch(url, {
@@ -352,7 +373,9 @@ export class WebFetchTool extends Tool {
 
         if (article) {
           text =
-            extractMode === "markdown" ? toMarkdown(article.content) : stripTags(article.content);
+            extractMode === "markdown"
+              ? toMarkdown(article.content)
+              : stripTags(article.content);
           text = article.title ? `# ${article.title}\n\n${text}` : text;
           extractor = "readability";
         } else {

@@ -18,6 +18,7 @@ Example: "AAPL stock price today", "Tesla stock price"
 ```
 
 For Chinese stocks, include the market:
+
 ```
 Query: "{CODE} 股票 今日价格"
 Example: "600519 贵州茅台 股价", "腾讯 股票"
@@ -26,6 +27,7 @@ Example: "600519 贵州茅台 股价", "腾讯 股票"
 ## Market Indices
 
 Common indices to search:
+
 - **US**: "S&P 500 index", "Dow Jones today", "NASDAQ composite"
 - **China**: "上证指数", "深证成指", "创业板指数"
 - **HK**: "恒生指数 today"
@@ -39,6 +41,7 @@ Query: "silver price today"
 ```
 
 For Chinese gold price (per gram):
+
 ```
 Query: "今日金价 人民币/克"
 ```
@@ -54,11 +57,13 @@ Query: "BTC ETH price"
 ## Response Format
 
 When reporting prices, include:
+
 1. Current price with currency
 2. Change amount and percentage (if available)
 3. Data timestamp or note that prices are delayed
 
 Example response:
+
 > **AAPL** (Apple Inc.)
 > Price: $178.52
 > Change: +2.31 (+1.31%)

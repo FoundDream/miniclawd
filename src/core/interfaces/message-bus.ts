@@ -41,7 +41,9 @@ export interface IMessageBus {
   /**
    * Consume the next outbound message with timeout.
    */
-  consumeOutboundWithTimeout(timeoutMs: number): Promise<OutboundMessage | null>;
+  consumeOutboundWithTimeout(
+    timeoutMs: number,
+  ): Promise<OutboundMessage | null>;
 
   /**
    * Subscribe to outbound messages for a specific channel.

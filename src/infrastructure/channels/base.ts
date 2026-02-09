@@ -2,7 +2,10 @@
  * Base channel interface for chat platforms.
  */
 
-import type { InboundMessage, OutboundMessage } from "../../core/types/message.js";
+import type {
+  InboundMessage,
+  OutboundMessage,
+} from "../../core/types/message.js";
 import type { IChannel } from "../../core/interfaces/channel.js";
 import { createInboundMessage } from "../queue/events.js";
 import { MessageBus } from "../queue/message-bus.js";
@@ -80,7 +83,7 @@ export abstract class BaseChannel implements IChannel {
     chatId: string,
     content: string,
     media?: string[],
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     if (!this.isAllowed(senderId)) {
       return;

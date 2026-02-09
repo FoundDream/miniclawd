@@ -17,7 +17,7 @@ export interface ILLMProvider {
     tools?: Record<string, CoreTool>,
     model?: string,
     maxTokens?: number,
-    temperature?: number
+    temperature?: number,
   ): Promise<LLMResponse>;
 
   /**

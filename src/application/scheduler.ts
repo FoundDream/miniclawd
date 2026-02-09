@@ -14,7 +14,10 @@ import type {
   JobStore,
   JobCallback,
 } from "../core/types/scheduler.js";
-import type { IScheduler, AddJobOptions } from "../core/interfaces/scheduler.js";
+import type {
+  IScheduler,
+  AddJobOptions,
+} from "../core/interfaces/scheduler.js";
 import logger from "../utils/logger.js";
 
 /** Default heartbeat interval: 30 minutes */
@@ -29,9 +32,14 @@ function nowMs(): number {
   return Date.now();
 }
 
-function computeNextRun(schedule: Schedule, currentMs: number): number | undefined {
+function computeNextRun(
+  schedule: Schedule,
+  currentMs: number,
+): number | undefined {
   if (schedule.kind === "at") {
-    return schedule.atMs && schedule.atMs > currentMs ? schedule.atMs : undefined;
+    return schedule.atMs && schedule.atMs > currentMs
+      ? schedule.atMs
+      : undefined;
   }
 
   if (schedule.kind === "every") {
@@ -120,7 +128,8 @@ export class Scheduler implements IScheduler {
     this.workspace = options.workspace;
     this.onJob = options.onJob || null;
     this.heartbeatEnabled = options.heartbeatEnabled ?? true;
-    this.heartbeatIntervalMs = options.heartbeatIntervalMs || DEFAULT_HEARTBEAT_INTERVAL_MS;
+    this.heartbeatIntervalMs =
+      options.heartbeatIntervalMs || DEFAULT_HEARTBEAT_INTERVAL_MS;
   }
 
   /**
@@ -186,7 +195,9 @@ export class Scheduler implements IScheduler {
     }
 
     // Filter out heartbeat job from persistence
-    const persistJobs = this.store.jobs.filter((j) => j.id !== this.heartbeatJobId);
+    const persistJobs = this.store.jobs.filter(
+      (j) => j.id !== this.heartbeatJobId,
+    );
 
     const data = {
       version: this.store.version,
@@ -259,7 +270,9 @@ export class Scheduler implements IScheduler {
     if (!this.store) return;
 
     // Check if heartbeat job already exists
-    const existing = this.store.jobs.find((j) => j.payload.kind === "heartbeat");
+    const existing = this.store.jobs.find(
+      (j) => j.payload.kind === "heartbeat",
+    );
     if (existing) {
       this.heartbeatJobId = existing.id;
       return;
@@ -289,7 +302,10 @@ export class Scheduler implements IScheduler {
 
     this.heartbeatJobId = job.id;
     this.store.jobs.push(job);
-    logger.info({ intervalMs: this.heartbeatIntervalMs }, "Heartbeat job added");
+    logger.info(
+      { intervalMs: this.heartbeatIntervalMs },
+      "Heartbeat job added",
+    );
   }
 
   /**
@@ -347,7 +363,7 @@ export class Scheduler implements IScheduler {
 
     const now = nowMs();
     const dueJobs = this.store.jobs.filter(
-      (j) => j.enabled && j.state.nextRunAtMs && now >= j.state.nextRunAtMs
+      (j) => j.enabled && j.state.nextRunAtMs && now >= j.state.nextRunAtMs,
     );
 
     for (const job of dueJobs) {
@@ -386,11 +402,17 @@ export class Scheduler implements IScheduler {
 
       job.state.lastStatus = "ok";
       job.state.lastError = undefined;
-      logger.info({ jobId: job.id, name: job.name }, "Scheduler: job completed");
+      logger.info(
+        { jobId: job.id, name: job.name },
+        "Scheduler: job completed",
+      );
     } catch (error) {
       job.state.lastStatus = "error";
       job.state.lastError = String(error);
-      logger.error({ jobId: job.id, name: job.name, error }, "Scheduler: job failed");
+      logger.error(
+        { jobId: job.id, name: job.name, error },
+        "Scheduler: job failed",
+      );
     }
 
     job.state.lastRunAtMs = startMs;
@@ -436,7 +458,10 @@ export class Scheduler implements IScheduler {
     const store = this.loadStore();
     return store.jobs
       .filter((j) => j.id !== this.heartbeatJobId)
-      .sort((a, b) => (a.state.nextRunAtMs || Infinity) - (b.state.nextRunAtMs || Infinity));
+      .sort(
+        (a, b) =>
+          (a.state.nextRunAtMs || Infinity) - (b.state.nextRunAtMs || Infinity),
+      );
   }
 
   /**

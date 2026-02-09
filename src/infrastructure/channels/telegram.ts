@@ -40,7 +40,10 @@ function markdownToTelegramHtml(text: string): string {
   text = text.replace(/^>\s*(.*)$/gm, "$1");
 
   // 5. Escape HTML special characters
-  text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  text = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
   // 6. Links [text](url)
   text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
@@ -60,13 +63,19 @@ function markdownToTelegramHtml(text: string): string {
 
   // 11. Restore inline code
   for (let i = 0; i < inlineCodes.length; i++) {
-    const escaped = inlineCodes[i].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const escaped = inlineCodes[i]
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
     text = text.replace(`\x00IC${i}\x00`, `<code>${escaped}</code>`);
   }
 
   // 12. Restore code blocks
   for (let i = 0; i < codeBlocks.length; i++) {
-    const escaped = codeBlocks[i].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const escaped = codeBlocks[i]
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
     text = text.replace(`\x00CB${i}\x00`, `<pre><code>${escaped}</code></pre>`);
   }
 
@@ -82,7 +91,11 @@ export class TelegramChannel extends BaseChannel {
   private groqApiKey: string;
   private chatIds: Map<string, number> = new Map();
 
-  constructor(config: TelegramConfig, bus: MessageBus, groqApiKey: string = "") {
+  constructor(
+    config: TelegramConfig,
+    bus: MessageBus,
+    groqApiKey: string = "",
+  ) {
     super(config, bus);
     this.groqApiKey = groqApiKey;
   }
@@ -105,7 +118,7 @@ export class TelegramChannel extends BaseChannel {
       const user = ctx.from;
       if (user) {
         await ctx.reply(
-          `Hi ${user.first_name}! I'm miniclawd.\n\nSend me a message and I'll respond!`
+          `Hi ${user.first_name}! I'm miniclawd.\n\nSend me a message and I'll respond!`,
         );
       }
     });
@@ -181,7 +194,9 @@ export class TelegramChannel extends BaseChannel {
       const htmlContent = markdownToTelegramHtml(msg.content);
 
       try {
-        await this.bot.api.sendMessage(chatId, htmlContent, { parse_mode: "HTML" });
+        await this.bot.api.sendMessage(chatId, htmlContent, {
+          parse_mode: "HTML",
+        });
       } catch (error) {
         // Fallback to plain text if HTML parsing fails
         logger.warn({ error }, "HTML parse failed, falling back to plain text");
@@ -251,7 +266,10 @@ export class TelegramChannel extends BaseChannel {
           mkdirSync(mediaDir, { recursive: true });
         }
 
-        const filePath = join(mediaDir, `${mediaFile.file_id.slice(0, 16)}${ext}`);
+        const filePath = join(
+          mediaDir,
+          `${mediaFile.file_id.slice(0, 16)}${ext}`,
+        );
 
         // Download the file
         const fileUrl = `https://api.telegram.org/file/bot${this.telegramConfig.token}/${file.file_path}`;
@@ -262,7 +280,10 @@ export class TelegramChannel extends BaseChannel {
         mediaPaths.push(filePath);
 
         // Handle voice/audio transcription (if Groq key available)
-        if ((mediaType === "voice" || mediaType === "audio") && this.groqApiKey) {
+        if (
+          (mediaType === "voice" || mediaType === "audio") &&
+          this.groqApiKey
+        ) {
           // TODO: Implement transcription with Groq
           contentParts.push(`[${mediaType}: ${filePath}]`);
         } else {
@@ -276,9 +297,13 @@ export class TelegramChannel extends BaseChannel {
       }
     }
 
-    const content = contentParts.length > 0 ? contentParts.join("\n") : "[empty message]";
+    const content =
+      contentParts.length > 0 ? contentParts.join("\n") : "[empty message]";
 
-    logger.debug({ senderId, content: content.slice(0, 50) }, "Telegram message received");
+    logger.debug(
+      { senderId, content: content.slice(0, 50) },
+      "Telegram message received",
+    );
 
     // Forward to the message bus
     await this.handleMessage(senderId, String(chatId), content, mediaPaths, {

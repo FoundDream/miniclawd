@@ -3,7 +3,14 @@
  */
 
 import { z } from "zod";
-import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "fs";
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from "fs";
 import { dirname, join } from "path";
 import { Tool } from "./base.js";
 import { expandUser } from "../utils/paths.js";
@@ -47,7 +54,8 @@ export class ReadFileTool extends Tool {
  */
 export class WriteFileTool extends Tool {
   readonly name = "write_file";
-  readonly description = "Write content to a file at the given path. Creates parent directories if needed.";
+  readonly description =
+    "Write content to a file at the given path. Creates parent directories if needed.";
   readonly parameters = z.object({
     path: z.string().describe("The file path to write to"),
     content: z.string().describe("The content to write"),
@@ -78,14 +86,19 @@ export class WriteFileTool extends Tool {
  */
 export class EditFileTool extends Tool {
   readonly name = "edit_file";
-  readonly description = "Edit a file by replacing old_text with new_text. The old_text must exist exactly in the file.";
+  readonly description =
+    "Edit a file by replacing old_text with new_text. The old_text must exist exactly in the file.";
   readonly parameters = z.object({
     path: z.string().describe("The file path to edit"),
     old_text: z.string().describe("The exact text to find and replace"),
     new_text: z.string().describe("The text to replace with"),
   });
 
-  async execute(params: { path: string; old_text: string; new_text: string }): Promise<string> {
+  async execute(params: {
+    path: string;
+    old_text: string;
+    new_text: string;
+  }): Promise<string> {
     try {
       const filePath = expandUser(params.path);
 

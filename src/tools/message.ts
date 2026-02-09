@@ -12,7 +12,8 @@ type SendCallback = (msg: OutboundMessage) => Promise<void>;
  * Create an outbound message with defaults.
  */
 function createOutboundMessage(
-  partial: Partial<OutboundMessage> & Pick<OutboundMessage, "channel" | "chatId" | "content">
+  partial: Partial<OutboundMessage> &
+    Pick<OutboundMessage, "channel" | "chatId" | "content">,
 ): OutboundMessage {
   return {
     media: [],
@@ -26,10 +27,14 @@ function createOutboundMessage(
  */
 export class MessageTool extends Tool {
   readonly name = "message";
-  readonly description = "Send a message to the user. Use this when you want to communicate something.";
+  readonly description =
+    "Send a message to the user. Use this when you want to communicate something.";
   readonly parameters = z.object({
     content: z.string().describe("The message content to send"),
-    channel: z.string().optional().describe("Optional: target channel (telegram, feishu, etc.)"),
+    channel: z
+      .string()
+      .optional()
+      .describe("Optional: target channel (telegram, feishu, etc.)"),
     chat_id: z.string().optional().describe("Optional: target chat/user ID"),
   });
 
@@ -37,7 +42,11 @@ export class MessageTool extends Tool {
   private defaultChannel: string = "";
   private defaultChatId: string = "";
 
-  constructor(options?: { sendCallback?: SendCallback; defaultChannel?: string; defaultChatId?: string }) {
+  constructor(options?: {
+    sendCallback?: SendCallback;
+    defaultChannel?: string;
+    defaultChatId?: string;
+  }) {
     super();
     this.sendCallback = options?.sendCallback || null;
     this.defaultChannel = options?.defaultChannel || "";
@@ -59,7 +68,11 @@ export class MessageTool extends Tool {
     this.sendCallback = callback;
   }
 
-  async execute(params: { content: string; channel?: string; chat_id?: string }): Promise<string> {
+  async execute(params: {
+    content: string;
+    channel?: string;
+    chat_id?: string;
+  }): Promise<string> {
     const channel = params.channel || this.defaultChannel;
     const chatId = params.chat_id || this.defaultChatId;
 

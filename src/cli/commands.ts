@@ -5,7 +5,14 @@
 import { Command } from "commander";
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
-import { loadConfig, saveConfig, getConfigPath, getDataDir, ConfigSchema, getWorkspacePath } from "../infrastructure/config/index.js";
+import {
+  loadConfig,
+  saveConfig,
+  getConfigPath,
+  getDataDir,
+  ConfigSchema,
+  getWorkspacePath,
+} from "../infrastructure/config/index.js";
 import { ensureDir } from "../utils/paths.js";
 import { MessageBus } from "../infrastructure/queue/message-bus.js";
 import { AgentLoop } from "../application/agent-loop.js";
@@ -90,7 +97,7 @@ This file stores important information that should persist across sessions.
 ## Important Notes
 
 (Things to remember)
-`
+`,
     );
     console.log("  Created memory/MEMORY.md");
   }
@@ -181,7 +188,9 @@ export function createProgram(): Command {
 
       if (!hasApiKey) {
         console.error("Error: No API key configured.");
-        console.error("Set one in ~/.miniclawd/config.json under providers.anthropic.apiKey");
+        console.error(
+          "Set one in ~/.miniclawd/config.json under providers.anthropic.apiKey",
+        );
         process.exit(1);
       }
 
@@ -202,7 +211,10 @@ export function createProgram(): Command {
         storePath: schedulerStorePath,
         workspace,
         onJob: async (job: ScheduledJob) => {
-          const response = await agent.processDirect(job.payload.message, `scheduler:${job.id}`);
+          const response = await agent.processDirect(
+            job.payload.message,
+            `scheduler:${job.id}`,
+          );
           if (job.payload.deliver && job.payload.to) {
             await bus.publishOutbound({
               channel: job.payload.channel || "telegram",
@@ -284,7 +296,10 @@ export function createProgram(): Command {
 
       if (options.message) {
         // Single message mode
-        const response = await agent.processDirect(options.message, options.session);
+        const response = await agent.processDirect(
+          options.message,
+          options.session,
+        );
         console.log(`\n${LOGO}: ${response}`);
       } else {
         // Interactive mode
@@ -304,7 +319,10 @@ export function createProgram(): Command {
             }
 
             try {
-              const response = await agent.processDirect(input, options.session);
+              const response = await agent.processDirect(
+                input,
+                options.session,
+              );
               console.log(`\n${LOGO}: ${response}\n`);
             } catch (error) {
               console.error(`Error: ${error}`);
@@ -324,7 +342,9 @@ export function createProgram(): Command {
     });
 
   // ========== Channels ==========
-  const channelsCmd = program.command("channels").description("Manage channels");
+  const channelsCmd = program
+    .command("channels")
+    .description("Manage channels");
 
   channelsCmd
     .command("status")
@@ -333,18 +353,30 @@ export function createProgram(): Command {
       const config = loadConfig();
 
       console.log("\nChannel Status\n");
-      console.log("Channel".padEnd(15) + "Enabled".padEnd(10) + "Configuration");
+      console.log(
+        "Channel".padEnd(15) + "Enabled".padEnd(10) + "Configuration",
+      );
       console.log("-".repeat(50));
 
       // Telegram
       const tg = config.channels.telegram;
-      const tgConfig = tg.token ? `token: ${tg.token.slice(0, 10)}...` : "not configured";
-      console.log("Telegram".padEnd(15) + (tg.enabled ? "Yes" : "No").padEnd(10) + tgConfig);
+      const tgConfig = tg.token
+        ? `token: ${tg.token.slice(0, 10)}...`
+        : "not configured";
+      console.log(
+        "Telegram".padEnd(15) +
+          (tg.enabled ? "Yes" : "No").padEnd(10) +
+          tgConfig,
+      );
 
       // Feishu
       const fs = config.channels.feishu;
-      const fsConfig = fs.appId ? `appId: ${fs.appId.slice(0, 10)}...` : "not configured";
-      console.log("Feishu".padEnd(15) + (fs.enabled ? "Yes" : "No").padEnd(10) + fsConfig);
+      const fsConfig = fs.appId
+        ? `appId: ${fs.appId.slice(0, 10)}...`
+        : "not configured";
+      console.log(
+        "Feishu".padEnd(15) + (fs.enabled ? "Yes" : "No").padEnd(10) + fsConfig,
+      );
     });
 
   // ========== Cron ==========
@@ -371,7 +403,7 @@ export function createProgram(): Command {
           "Name".padEnd(20) +
           "Schedule".padEnd(20) +
           "Status".padEnd(10) +
-          "Next Run"
+          "Next Run",
       );
       console.log("-".repeat(80));
 
@@ -397,7 +429,7 @@ export function createProgram(): Command {
             job.name.slice(0, 18).padEnd(20) +
             sched.slice(0, 18).padEnd(20) +
             status.padEnd(10) +
-            nextRun
+            nextRun,
         );
       }
     });
@@ -506,17 +538,27 @@ export function createProgram(): Command {
 
       console.log(`\n${LOGO} Status\n`);
 
-      console.log(`Config: ${configPath} ${existsSync(configPath) ? "[OK]" : "[NOT FOUND]"}`);
-      console.log(`Workspace: ${workspace} ${existsSync(workspace) ? "[OK]" : "[NOT FOUND]"}`);
+      console.log(
+        `Config: ${configPath} ${existsSync(configPath) ? "[OK]" : "[NOT FOUND]"}`,
+      );
+      console.log(
+        `Workspace: ${workspace} ${existsSync(workspace) ? "[OK]" : "[NOT FOUND]"}`,
+      );
 
       if (existsSync(configPath)) {
         console.log(`Model: ${config.agents.defaults.model}`);
 
         // Check API keys
-        const hasAnthopic = !!config.providers.anthropic.apiKey || !!process.env.ANTHROPIC_API_KEY;
-        const hasOpenai = !!config.providers.openai.apiKey || !!process.env.OPENAI_API_KEY;
-        const hasOpenrouter = !!config.providers.openrouter.apiKey || !!process.env.OPENROUTER_API_KEY;
-        const hasGoogle = !!config.providers.google.apiKey || !!process.env.GOOGLE_API_KEY;
+        const hasAnthopic =
+          !!config.providers.anthropic.apiKey ||
+          !!process.env.ANTHROPIC_API_KEY;
+        const hasOpenai =
+          !!config.providers.openai.apiKey || !!process.env.OPENAI_API_KEY;
+        const hasOpenrouter =
+          !!config.providers.openrouter.apiKey ||
+          !!process.env.OPENROUTER_API_KEY;
+        const hasGoogle =
+          !!config.providers.google.apiKey || !!process.env.GOOGLE_API_KEY;
 
         console.log(`Anthropic API: ${hasAnthopic ? "[OK]" : "not set"}`);
         console.log(`OpenAI API: ${hasOpenai ? "[OK]" : "not set"}`);

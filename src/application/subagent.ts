@@ -44,7 +44,10 @@ export class SubagentManager implements ISubagentManager {
     model?: string;
     braveApiKey?: string;
   }) {
-    this.provider = new AIProvider({ config: options.config, defaultModel: options.model });
+    this.provider = new AIProvider({
+      config: options.config,
+      defaultModel: options.model,
+    });
     this.workspace = options.workspace;
     this.bus = options.bus;
     this.model = options.model || options.config.agents.defaults.model;
@@ -56,7 +59,9 @@ export class SubagentManager implements ISubagentManager {
    */
   async spawn(options: SpawnOptions): Promise<string> {
     const taskId = randomUUID().slice(0, 8);
-    const displayLabel = options.label || options.task.slice(0, 30) + (options.task.length > 30 ? "..." : "");
+    const displayLabel =
+      options.label ||
+      options.task.slice(0, 30) + (options.task.length > 30 ? "..." : "");
 
     const origin = {
       channel: options.originChannel || "cli",
@@ -86,7 +91,7 @@ export class SubagentManager implements ISubagentManager {
     taskId: string,
     task: string,
     label: string,
-    origin: { channel: string; chatId: string }
+    origin: { channel: string; chatId: string },
   ): Promise<void> {
     logger.info({ taskId, label }, "Subagent starting task");
 
@@ -118,7 +123,7 @@ export class SubagentManager implements ISubagentManager {
         const response = await this.provider.chat(
           messages,
           tools.getDefinitions(),
-          this.model
+          this.model,
         );
 
         if (AIProvider.hasToolCalls(response)) {
@@ -133,15 +138,23 @@ export class SubagentManager implements ISubagentManager {
           messages.push({
             role: "assistant",
             content: [
-              ...(response.content ? [{ type: "text" as const, text: response.content }] : []),
+              ...(response.content
+                ? [{ type: "text" as const, text: response.content }]
+                : []),
               ...toolCallParts,
             ],
           });
 
           // Execute tools
           for (const toolCall of response.toolCalls) {
-            logger.debug({ taskId, tool: toolCall.name }, "Subagent executing tool");
-            const result = await tools.execute(toolCall.name, toolCall.arguments);
+            logger.debug(
+              { taskId, tool: toolCall.name },
+              "Subagent executing tool",
+            );
+            const result = await tools.execute(
+              toolCall.name,
+              toolCall.arguments,
+            );
 
             messages.push({
               role: "tool",
@@ -183,7 +196,7 @@ export class SubagentManager implements ISubagentManager {
     task: string,
     result: string,
     origin: { channel: string; chatId: string },
-    status: "ok" | "error"
+    status: "ok" | "error",
   ): Promise<void> {
     const statusText = status === "ok" ? "completed successfully" : "failed";
 

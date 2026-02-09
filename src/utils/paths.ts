@@ -82,7 +82,11 @@ export function timestamp(): string {
 /**
  * Truncate a string to max length, adding suffix if truncated.
  */
-export function truncateString(s: string, maxLen: number = 100, suffix: string = "..."): string {
+export function truncateString(
+  s: string,
+  maxLen: number = 100,
+  suffix: string = "...",
+): string {
   if (s.length <= maxLen) {
     return s;
   }

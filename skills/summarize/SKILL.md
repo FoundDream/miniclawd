@@ -10,6 +10,7 @@ Summarize content from URLs, files, or text into digestible formats.
 ## Summarizing URLs
 
 1. Use `web_fetch` tool to get the content:
+
 ```
 web_fetch(url="https://example.com/article")
 ```
@@ -19,6 +20,7 @@ web_fetch(url="https://example.com/article")
 ## Summarizing Files
 
 1. Use `read_file` tool to read the content:
+
 ```
 read_file(path="/path/to/document.md")
 ```
@@ -28,14 +30,17 @@ read_file(path="/path/to/document.md")
 ## Summary Formats
 
 ### Brief Summary (Default)
+
 - 2-3 sentences capturing the main idea
 - Best for quick understanding
 
 ### Key Points
+
 - Bullet list of 5-7 main points
 - Include important facts, numbers, quotes
 
 ### Structured Summary
+
 ```
 ## TL;DR
 One sentence summary
@@ -53,7 +58,9 @@ What reader should remember or do
 ```
 
 ### Executive Summary
+
 For business/technical documents:
+
 ```
 ## Overview
 Brief context

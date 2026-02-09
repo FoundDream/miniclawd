@@ -20,12 +20,14 @@ Query: "Product Hunt top products today"
 ## Common Queries
 
 ### Today's Top Products
+
 ```
 "Product Hunt today"
 "Product Hunt daily top 5"
 ```
 
 ### Category Search
+
 ```
 "Product Hunt best AI tools"
 "Product Hunt developer tools"
@@ -36,12 +38,14 @@ Query: "Product Hunt top products today"
 ```
 
 ### Specific Product Lookup
+
 ```
 "site:producthunt.com {product name}"
 "{product name} Product Hunt launch"
 ```
 
 ### Trending & Awards
+
 ```
 "Product Hunt Product of the Day"
 "Product Hunt Golden Kitty winners"
@@ -52,6 +56,7 @@ Query: "Product Hunt top products today"
 ## Response Format
 
 ### Product List
+
 ```
 ## Product Hunt - {Category/Date}
 
@@ -69,6 +74,7 @@ Query: "Product Hunt top products today"
 ```
 
 ### Single Product Detail
+
 ```
 ## {Product Name}
 
@@ -95,16 +101,16 @@ Query: "Product Hunt top products today"
 
 ## Popular Categories
 
-| Category | Search Term |
-|----------|-------------|
-| AI & ML | `AI tools`, `machine learning` |
-| Developer | `developer tools`, `API`, `devtools` |
-| Productivity | `productivity`, `task management` |
-| Design | `design tools`, `UI/UX` |
-| No-Code | `no-code`, `low-code` |
-| Marketing | `marketing tools`, `SEO` |
-| Finance | `fintech`, `crypto` |
-| Health | `health`, `fitness`, `wellness` |
+| Category     | Search Term                          |
+| ------------ | ------------------------------------ |
+| AI & ML      | `AI tools`, `machine learning`       |
+| Developer    | `developer tools`, `API`, `devtools` |
+| Productivity | `productivity`, `task management`    |
+| Design       | `design tools`, `UI/UX`              |
+| No-Code      | `no-code`, `low-code`                |
+| Marketing    | `marketing tools`, `SEO`             |
+| Finance      | `fintech`, `crypto`                  |
+| Health       | `health`, `fitness`, `wellness`      |
 
 ## Tips
 

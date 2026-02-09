@@ -107,7 +107,9 @@ export class SkillsLoader {
 
     // Filter by requirements
     if (filterUnavailable) {
-      return skills.filter((s) => this.checkRequirements(this.getSkillMeta(s.name)));
+      return skills.filter((s) =>
+        this.checkRequirements(this.getSkillMeta(s.name)),
+      );
     }
 
     return skills;

@@ -31,7 +31,10 @@ export class SpawnTool extends Tool {
     "The subagent will complete the task and report back when done.";
   readonly parameters = z.object({
     task: z.string().describe("The task for the subagent to complete"),
-    label: z.string().optional().describe("Optional short label for the task (for display)"),
+    label: z
+      .string()
+      .optional()
+      .describe("Optional short label for the task (for display)"),
   });
 
   private manager: ISubagentManager;

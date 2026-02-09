@@ -2,13 +2,17 @@
  * Event factory functions for the message bus.
  */
 
-import type { InboundMessage, OutboundMessage } from "../../core/types/message.js";
+import type {
+  InboundMessage,
+  OutboundMessage,
+} from "../../core/types/message.js";
 
 /**
  * Create an inbound message with defaults.
  */
 export function createInboundMessage(
-  partial: Partial<InboundMessage> & Pick<InboundMessage, "channel" | "senderId" | "chatId" | "content">
+  partial: Partial<InboundMessage> &
+    Pick<InboundMessage, "channel" | "senderId" | "chatId" | "content">,
 ): InboundMessage {
   return {
     timestamp: new Date(),
@@ -22,7 +26,8 @@ export function createInboundMessage(
  * Create an outbound message with defaults.
  */
 export function createOutboundMessage(
-  partial: Partial<OutboundMessage> & Pick<OutboundMessage, "channel" | "chatId" | "content">
+  partial: Partial<OutboundMessage> &
+    Pick<OutboundMessage, "channel" | "chatId" | "content">,
 ): OutboundMessage {
   return {
     media: [],

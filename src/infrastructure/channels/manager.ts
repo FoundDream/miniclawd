@@ -35,7 +35,7 @@ export class ChannelManager {
         const channel = new TelegramChannel(
           this.config.channels.telegram,
           this.bus,
-          this.config.providers.groq.apiKey
+          this.config.providers.groq.apiKey,
         );
         this.channels.set("telegram", channel);
         logger.info("Telegram channel enabled");
@@ -47,7 +47,10 @@ export class ChannelManager {
     // Feishu channel
     if (this.config.channels.feishu.enabled) {
       try {
-        const channel = new FeishuChannel(this.config.channels.feishu, this.bus);
+        const channel = new FeishuChannel(
+          this.config.channels.feishu,
+          this.bus,
+        );
         this.channels.set("feishu", channel);
         logger.info("Feishu channel enabled");
       } catch (error) {
@@ -115,7 +118,10 @@ export class ChannelManager {
         try {
           await channel.send(msg);
         } catch (error) {
-          logger.error({ error, channel: msg.channel }, "Error sending to channel");
+          logger.error(
+            { error, channel: msg.channel },
+            "Error sending to channel",
+          );
         }
       } else {
         logger.warn({ channel: msg.channel }, "Unknown channel");
